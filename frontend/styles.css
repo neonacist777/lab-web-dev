@@ -1,0 +1,85 @@
+.page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.page-title {
+  margin: 0 0 12px;
+}
+
+.panel {
+  border: 1px solid #ddd;
+  padding: 12px;
+  margin-top: 12px;
+}
+
+.field {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.field-input {
+  width: 100%;
+  padding: 8px;
+}
+
+.btn-submit {
+  padding: 8px 12px;
+}
+
+.status-message {
+  margin-top: 10px;
+}
+
+.status-loading {
+  opacity: 0.7;
+}
+
+.status-error {
+  font-weight: 600;
+}
+
+.status-ok {
+  font-weight: 600;
+}
+
+.list-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.list-empty {
+  opacity: 0.7;
+  margin: 0;
+}
+
+.btn-delete {
+  padding: 6px 10px;
+}
+
+.error {
+    border: 2px solid red;
+}
+
+.error-msg {
+    color: red;
+    font-size: 14px;
+    margin: 4px 0 0 0;
+}
+

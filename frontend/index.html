@@ -4,14 +4,96 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>ЛР1: Мій застосунок</title>
-    <link rel="stylesheet" href=".styles.css" />
-    <script src=".app.js" defer></script>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
 </head>
 <body>
     <header>
-        <h1>Hello, World!</h1>
+        <h1>Трекер інцедентів кібербезпеки</h1>
     </header>
-    <main></main>
-    <footer></footer>
+    <main>
+<div class="panel">
+    <h2>Додати інцедент</h2>
+
+     <form id="incidentForm">
+
+        <div class="field">
+ <label for="titleInput">Назва інцеденту</label>
+ <input id="titleInput" class="input" type="text" />
+ <p class="error-msg" id="titleError"></p>
+</div>
+
+<div class="field">
+    <span class="field-label">Тип інцеденту</span>
+    <select id="typeSelect" class="field-label">
+        <option value="" disabled selected hidden>Оберіть тип інцеденту</option>
+        <option value="DDoS">DDos (атака відмови в обслуговуванні)</option>
+        <option value="Malware">Malware (шкідливе ПЗ)</option>
+        <option value="Phishing">Phishing (фішинг)</option>
+        <option value="Data Leak">Data Leak (витік даних)</option>
+    </select>
+     <p class="error-msg" id="typeError"></p>
+</div>
+
+<div class="field">
+    <span class="field-label">Дата виявлення</span>
+    <input id="dateInput" class="field-input" type="date" placeholder="Оберіть дату">
+    <p class="error-msg" id="dateError"></p>
+</div>
+
+<div class="field">
+    <span class="field-label">Критичність (1-10)</span>
+    <input id="severityInput" class="field-input" type="number" min="1" max="10" placeholder="Введіть рівень критичності">
+    <p class="error-msg" id="severityError"></p>
+</div>
+
+<div class="field">
+    <span class="field-input">URL джерела (необов'язково)</span>
+    <input id="urlInput" class="field-input" type="url" placeholder="Вставте URL (за наявності)">
+    <p class="error-msg" id="urlError"></p>
+</div>
+
+    <button type="submit" class="btn-submit">Додати інцедент</button>
+    <p id="statusMessage" class="status-message"></p>
+</form>
+</div>
+
+<div class="panel">
+    <h2>Список інцедентів</h2>
+
+<div class="field">
+    <input id="searchInput" class="field-input" type="text" placeholder="Пошук за назвою">
+</div>
+
+<div class="field">
+    <select id="filterType" class="field-input">
+        <option value="">Усі типи</option>
+        <option value="DDoS">DDos</option>
+        <option value="Malware">Malware</option>
+        <option value="Phishing">Phishing</option>
+        <option value="Data Leak">Data Leak</option>
+    </select>
+</div>
+
+<div class="field">
+    <select id="sortSelect" class="field-input">
+        <option value="">Без сортування</option>
+        <option value="dateAsc">Дата (за зростанням)</option>
+        <option value="dateDesc">Дата (за спаданням)</option>
+        <option value="severityAsc">Критичність (за зростанням)</option>
+        <option value="severityDesc">Критичність (за спаданням)</option>
+    </select>
+</div>
+
+    <ul id="incidentList" class="list-items"></ul>
+    <p id="emptyMessage" class="list-empty">Записів поки немає</p>
+
+</div>
+
+</main>
+
+ <footer>
+
+    </footer>
 </body>
 </html>
