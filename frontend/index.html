@@ -12,10 +12,11 @@
         <h1>Трекер інцедентів кібербезпеки</h1>
     </header>
     <main>
+        // ПАНЕЛЬ ДОДАВАННЯ ІНЦЕДЕНТУ
 <div class="panel">
     <h2>Додати інцедент</h2>
 
-     <form id="incidentForm">
+     <form id="incidentForm"> // ФОРМА ДОДАВАННЯ/РЕДАГУВАННЯ ІНЦЕДЕНТУ
 
         <div class="field">
  <label for="titleInput">Назва інцеденту</label>
@@ -58,13 +59,15 @@
 </form>
 </div>
 
+// ПАНЕЛЬ СПИСКУ ІНЦЕДЕНТІВ
 <div class="panel">
     <h2>Список інцедентів</h2>
 
 <div class="field">
-    <input id="searchInput" class="field-input" type="text" placeholder="Пошук за назвою">
+    <input id="searchInput" class="field-input" type="text" placeholder="Пошук за назвою"> // ПОШУК ЗА НАЗВОЮ
 </div>
 
+// ФІЛЬТРАЦІЯ ЗА ТИПОМ ІНЦЕДЕНТУ
 <div class="field">
     <select id="filterType" class="field-input">
         <option value="">Усі типи</option>
@@ -75,6 +78,7 @@
     </select>
 </div>
 
+// СОРТУВАННЯ ЗА ДАТОЮ ТА КРИТИЧНІСТЮ
 <div class="field">
     <select id="sortSelect" class="field-input">
         <option value="">Без сортування</option>
@@ -85,8 +89,9 @@
     </select>
 </div>
 
+    // СПИСОК ІНЦЕДЕНТІВ
     <ul id="incidentList" class="list-items"></ul>
-    <p id="emptyMessage" class="list-empty">Записів поки немає</p>
+    <p id="emptyMessage" class="list-empty">Записів поки немає</p> // ПОВІДОМЛЕННЯ ПРО ВІДСУТНІСТЬ ІНЦЕДЕНТІВ
 
 </div>
 

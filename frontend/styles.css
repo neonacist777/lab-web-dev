@@ -1,3 +1,30 @@
+/* БАЗА СТОРІНКИ  */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #eef1f4;
+  margin: 0;
+  padding: 0;
+  color: #222;
+}
+
+header {
+  background: #1976d2;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+
+main {
+  max-width: 900px;
+  margin: 25px auto;
+  padding: 0 15px;
+}
+
+/* КОНТЕЙНЕРИ  */
 .page {
   max-width: 800px;
   margin: 0 auto;
@@ -9,32 +36,110 @@
 }
 
 .panel {
-  border: 1px solid #ddd;
-  padding: 12px;
+  background: #fff;
+  padding: 20px 25px;
   margin-top: 12px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
 }
 
+.panel h2 {
+  margin-top: 0;
+  color: #1976d2;
+  font-size: 22px;
+}
+
+/* ПОЛЯ ФОРМИ  */
 .field {
-  display: block;
-  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
 }
 
-.field-label {
+.field-label,
+label,
+span.field-label,
+span.field-input {
   display: block;
+  font-weight: bold;
   margin-bottom: 4px;
 }
 
-.field-input {
+/* УНІФІКОВАНІ ПОЛЯ ВВОДУ */
+input,
+select,
+.field-input,
+.input {
   width: 100%;
-  padding: 8px;
+  padding: 10px 12px;
+  border: 1px solid #bfc5cc;
+  border-radius: 6px;
+  font-size: 15px;
+  background: #fafafa;
 }
 
+input:focus,
+select:focus,
+.field-input:focus,
+.input:focus {
+  border-color: #1976d2;
+  background: #fff;
+  outline: none;
+}
+
+/* КНОПКИ */
 .btn-submit {
-  padding: 8px 12px;
+  background: #1976d2;
+  color: #fff;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+  width: 100%;
 }
 
+.btn-submit:hover {
+  background: #125a9c;
+}
+
+.btn-delete,
+.delete-btn,
+.edit-btn {
+  padding: 7px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.edit-btn {
+  background: #ffb300;
+  color: #fff;
+}
+
+.edit-btn:hover {
+  background: #ffa000;
+}
+
+.delete-btn,
+.btn-delete {
+  background: #e53935;
+  color: #fff;
+}
+
+.delete-btn:hover,
+.btn-delete:hover {
+  background: #c62828;
+}
+
+/* СТАТУСИ ТА ПОМИЛКИ */
 .status-message {
   margin-top: 10px;
+  font-weight: bold;
 }
 
 .status-loading {
@@ -43,43 +148,58 @@
 
 .status-error {
   font-weight: 600;
+  color: #d32f2f;
 }
 
 .status-ok {
   font-weight: 600;
+  color: #2e7d32;
 }
 
+.error {
+  border: 2px solid red !important;
+}
+
+.error-msg {
+  color: #d32f2f;
+  font-size: 13px;
+  margin: 4px 0 0 0;
+}
+
+/* СПИСОК ІНЦИДЕНТІВ */
 .list-items {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.list-item {
+.list-item,
+.list-items li {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 8px 0;
+  padding: 10px 0;
   border-bottom: 1px solid #eee;
+  background: #fdfdfd;
+  border-radius: 6px;
+  padding-inline: 12px;
+  margin-bottom: 8px;
+}
+
+.item-info {
+  max-width: 70%;
+  line-height: 1.4;
+}
+
+.item-actions button {
+  margin-left: 10px;
 }
 
 .list-empty {
   opacity: 0.7;
   margin: 0;
+  text-align: center;
+  color: #777;
+  margin-top: 15px;
 }
-
-.btn-delete {
-  padding: 6px 10px;
-}
-
-.error {
-    border: 2px solid red;
-}
-
-.error-msg {
-    color: red;
-    font-size: 14px;
-    margin: 4px 0 0 0;
-}
-
