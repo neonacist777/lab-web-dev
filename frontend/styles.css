@@ -203,3 +203,9 @@ select:focus,
   color: #777;
   margin-top: 15px;
 }
+
+.field span.field-input {
+  border: none !important;
+  padding: 0 !important;
+  background: transparent !important;
+}

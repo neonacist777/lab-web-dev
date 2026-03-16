@@ -12,11 +12,11 @@
         <h1>Трекер інцедентів кібербезпеки</h1>
     </header>
     <main>
-        // ПАНЕЛЬ ДОДАВАННЯ ІНЦЕДЕНТУ
+        <!-- ПАНЕЛЬ ДОДАВАННЯ ІНЦЕДЕНТУ -->
 <div class="panel">
     <h2>Додати інцедент</h2>
 
-     <form id="incidentForm"> // ФОРМА ДОДАВАННЯ/РЕДАГУВАННЯ ІНЦЕДЕНТУ
+     <form id="incidentForm">  <!-- ФОРМА ДОДАВАННЯ/РЕДАГУВАННЯ ІНЦЕДЕНТУ -->
 
         <div class="field">
  <label for="titleInput">Назва інцеденту</label>
@@ -26,7 +26,7 @@
 
 <div class="field">
     <span class="field-label">Тип інцеденту</span>
-    <select id="typeSelect" class="field-label">
+    <select id="typeSelect" class="field-label" required>
         <option value="" disabled selected hidden>Оберіть тип інцеденту</option>
         <option value="DDoS">DDos (атака відмови в обслуговуванні)</option>
         <option value="Malware">Malware (шкідливе ПЗ)</option>
@@ -38,13 +38,13 @@
 
 <div class="field">
     <span class="field-label">Дата виявлення</span>
-    <input id="dateInput" class="field-input" type="date" placeholder="Оберіть дату">
+    <input id="dateInput" class="field-input" type="date" required>
     <p class="error-msg" id="dateError"></p>
 </div>
 
 <div class="field">
     <span class="field-label">Критичність (1-10)</span>
-    <input id="severityInput" class="field-input" type="number" min="1" max="10" placeholder="Введіть рівень критичності">
+    <input id="severityInput" class="field-input" type="number" min="1" max="10" required>
     <p class="error-msg" id="severityError"></p>
 </div>
 
@@ -59,15 +59,15 @@
 </form>
 </div>
 
-// ПАНЕЛЬ СПИСКУ ІНЦЕДЕНТІВ
+<!-- ПАНЕЛЬ СПИСКУ ІНЦЕДЕНТІВ -->
 <div class="panel">
     <h2>Список інцедентів</h2>
 
 <div class="field">
-    <input id="searchInput" class="field-input" type="text" placeholder="Пошук за назвою"> // ПОШУК ЗА НАЗВОЮ
+    <input id="searchInput" class="field-input" type="text" placeholder="Пошук за назвою"> <!-- ПОШУК ЗА НАЗВОЮ -->
 </div>
 
-// ФІЛЬТРАЦІЯ ЗА ТИПОМ ІНЦЕДЕНТУ
+<!-- ФІЛЬТРАЦІЯ ЗА ТИПОМ ІНЦЕДЕНТУ -->
 <div class="field">
     <select id="filterType" class="field-input">
         <option value="">Усі типи</option>
@@ -78,7 +78,7 @@
     </select>
 </div>
 
-// СОРТУВАННЯ ЗА ДАТОЮ ТА КРИТИЧНІСТЮ
+<!-- СОРТУВАННЯ ЗА ДАТОЮ ТА КРИТИЧНІСТЮ -->
 <div class="field">
     <select id="sortSelect" class="field-input">
         <option value="">Без сортування</option>
@@ -89,9 +89,9 @@
     </select>
 </div>
 
-    // СПИСОК ІНЦЕДЕНТІВ
+    <!-- СПИСОК ІНЦЕДЕНТІВ -->
     <ul id="incidentList" class="list-items"></ul>
-    <p id="emptyMessage" class="list-empty">Записів поки немає</p> // ПОВІДОМЛЕННЯ ПРО ВІДСУТНІСТЬ ІНЦЕДЕНТІВ
+    <p id="emptyMessage" class="list-empty">Записів поки немає</p> <!-- ПОВІДОМЛЕННЯ ПРО ВІДСУТНІСТЬ ІНЦЕДЕНТІВ -->
 
 </div>
 

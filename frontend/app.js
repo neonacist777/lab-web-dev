@@ -1,6 +1,4 @@
-const state = {
-    incidents: []
-}
+const API_URL = "http://localhost:3000/api/incidents"; // Базовий URL бекендy
 
 let editingId = null;
 
@@ -24,10 +22,11 @@ const searchInput = document.getElementById("searchInput")
 const filterType = document.getElementById("filterType")
 const sortSelect = document.getElementById("sortSelect")
 
+let state = { incidents: [] }; // Локальний стан для зберігання списку інцидентів, який буде використовуватися для відображення та маніпуляції даними на клієнтській стороні, дозволяючи зберігати отримані з бекенду інциденти та оновлювати їх при додаванні, редагуванні або видаленні інцидентів, а також для фільтрації та сортування списку інцидентів перед відображенням на сторінці
+
 // ЗЧИТУВАННЯ ДАНИХ З ФОРМИ
 function readForm() {
     return {
-        id: editingId? editingId : crypto.randomUUID(), // Генеруємо унікальний ID для нового інциденту
         title: titleInput.value.trim(), 
         type: typeSelect.value,
         date: dateInput.value,
@@ -88,20 +87,40 @@ function validateForm(data) {
 }
 
 // ДОДАВАННЯ НОВОГО ІНЦИДЕНТУ
-function addItem(data) {
-    state.incidents.push(data);
-    saveToStorage();
+async function addItem(data) {
+    try {
+        const res = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+        const savedItem = await res.json();
+        state.incidents.push(savedItem);
+        render();
+    } catch (err) {
+        console.error("Помилка при додаванні:", err);
+    }
 }
 
 // ОНОВЛЕННЯ ІСНУЮЧОГО ІНЦИДЕНТУ
-function updateItem(id, data) {
-    const idx = state.incidents.findIndex(inc => inc.id === id); // Знаходимо індекс інциденту за ID
-    if (idx === -1) return;
-    state.incidents[idx] = { ...state.incidents[idx], ...data }; // Оновлюємо дані інциденту, зберігаючи незмінні поля
-    editingId = null;
-    document.querySelector(".btn-submit").textContent = "Додати інцидент"; 
-    saveToStorage();
+async function updateItem(id, data) {
+    try {
+        const res = await fetch(`${API_URL}/${id}`, { // Виконуємо PUT-запит на бекенд для оновлення інцидента з вказаним ID, передаючи нові дані інцидента у форматі JSON в тілі запиту, і отримуємо оновлений об'єкт інцидента у відповіді
+            method: "PUT",
+            headers: { "Content-Type": "application/json" }, // Вказуємо, що тіло запиту містить дані у форматі JSON
+            body: JSON.stringify(data) // Перетворюємо об'єкт data у JSON-рядок для відправки на сервер
+        });
+        const updatedItem = await res.json();
+        const idx = state.incidents.findIndex(inc => inc.id === Number(id)); // Знаходимо індекс оновленого інцидента в локальному стані за його ID, щоб замінити його на оновлений об'єкт, отриманий з відповіді сервера
+        if (idx !== -1) state.incidents[idx] = updatedItem;
+        editingId = null;
+        document.querySelector(".btn-submit").textContent = "Додати інцидент"; // Після оновлення інцидента скидаємо режим редагування, встановлюючи editingId в null, і змінюємо текст кнопки на "Додати інцидент", щоб користувач розумів, що тепер він може додавати нові інциденти замість редагування існуючих
+        render();
+    } catch (err) {
+        console.error("Помилка при оновленні:", err); // Якщо під час оновлення інцидента виникла помилка, вона буде перехоплена в цьому блоці catch, і ми виведемо повідомлення про помилку в консоль для налагодження та інформування розробника про проблему, яка сталася під час взаємодії з бекендом
+    }
 }
+
 
 // ОЧИЩЕННЯ ФОРМИ
 function clearForm() {
@@ -114,7 +133,7 @@ function clearForm() {
 
 // ПОЧАТОК РЕДАГУВАННЯ ІНЦИДЕНТУ
 function startEdit(id) {
-    const item = state.incidents.find(inc => inc.id === id);
+    const item = state.incidents.find(inc => inc.id === Number(id));
     if (!item) return;
 
     // Заповнюємо форму даними інциденту для редагування
@@ -134,10 +153,14 @@ function saveToStorage() {
 }
 
 // ЗАВАНТАЖЕННЯ ДАНИХ З LOCAL STORAGE
-function loadFromStorage() {
-    const saved = localStorage.getItem("incidents"); 
-    if (saved) {
-        state.incidents = JSON.parse(saved);
+async function loadFromStorage() {
+    try {
+        const res = await fetch(API_URL);      // GET-запит на бекенд
+        const data = await res.json();
+        state.incidents = data;
+        render();
+    } catch (err) {
+        console.error("Помилка при завантаженні:", err);
     }
 }
 
@@ -179,7 +202,7 @@ function render() {
     items.forEach((inc, index) => {
         const li = document.createElement("li");
         li.className = "list-item";
-
+        
         li.innerHTML = `
             <div>
                 <strong>${inc.title}</strong><br>
@@ -198,35 +221,36 @@ function render() {
 }
 
 // ОБРОБКА КЛІКІВ НА КНОПКИ РЕДАГУВАННЯ ТА ВИДАЛЕННЯ
-list.addEventListener("click", (e) => {
-    if (e.target.classList.contains("delete-btn")) { // Видалення
-        const id = e.target.dataset.id;
-        state.incidents = state.incidents.filter(inc => inc.id !== id);
-        saveToStorage();
-        render();
+list.addEventListener("click", async (e) => {
+    const id = e.target.dataset.id;
+    if (!id) return;
+
+    // РЕДАГУВАННЯ
+    if (e.target.classList.contains("edit-btn")) {
+        startEdit(id);
+        return;
     }
 
-    if (e.target.classList.contains("edit-btn")) { // Редагування
-        const id = e.target.dataset.id;
-        startEdit(id);
+    // ВИДАЛЕННЯ
+    if (e.target.classList.contains("delete-btn")) {
+        try {
+            await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+            state.incidents = state.incidents.filter(inc => inc.id !== Number(id));
+            render();
+        } catch (err) {
+            console.error("Помилка при видаленні:", err);
+        }
     }
 });
 
 // ОБРОБКА ВІДПРАВКИ ФОРМИ
-form.addEventListener("submit", event => {
-    event.preventDefault();
-    
-    const data = readForm();
-
-    if (!validateForm(data)) return;
-    if (editingId) {
-        updateItem(editingId, data);
-    } else {
-        addItem(data);
-    }
-
-    clearForm();
-    render();
+form.addEventListener("submit", async event => { // Додаємо обробник події submit на форму, який буде викликатися при спробі відправити форму, і виконує асинхронну функцію для обробки даних форми та взаємодії з бекендом
+    event.preventDefault(); // Запобігаємо стандартній поведінці браузера при відправці форми, яка полягає в перезавантаженні сторінки, щоб ми могли обробити дані форми за допомогою JavaScript і виконати асинхронні запити до бекенду без перезавантаження сторінки
+    const data = readForm(); // Зчитуємо дані з форми за допомогою функції readForm, яка збирає значення з полів форми і повертає об'єкт з даними інцидента, які ми будемо використовувати для створення нового інцидента або оновлення існуючого на бекенді
+    if (!validateForm(data)) return; // Якщо дані форми не пройшли валідацію, ми припиняємо подальшу обробку, щоб користувач міг виправити помилки в формі, і не відправляємо некоректні дані на сервер
+    if (editingId) await updateItem(editingId, data); // Якщо ми зараз редагуємо існуючий інцидент (editingId не null), виконуємо оновлення інцидента на бекенді за допомогою функції updateItem, передаючи ID редагованого інцидента та нові дані, і чекаємо завершення цього процесу, перш ніж продовжити, щоб переконатися, що дані на сервері оновлені перед тим, як ми очистимо форму та скинемо режим редагування
+    else await addItem(data); // Якщо ми не редагуємо інцидент (editingId null), виконуємо додавання нового інцидента на бекенді за допомогою функції addItem, передаючи дані нового інцидента, і чекаємо завершення цього процесу, перш ніж очистити форму, щоб переконатися, що новий інцидент успішно доданий на сервері перед тим, як ми очистимо форму для наступного введення
+    clearForm(); // Після успішного додавання або оновлення інцидента очищаємо форму, щоб підготувати її для введення нового інцидента або редагування іншого інцидента, і скидаємо всі поля форми до їх початкового стану, щоб користувач міг почати з чистого аркуша
 });
 
 // ІНІЦІАЛІЗАЦІЯ
