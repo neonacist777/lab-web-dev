@@ -1,34 +1,51 @@
-let users = []; // Тимчасове сховище для користувачів, замінює базу даних для простоти реалізації
-let userID = 1; // Лічильник для генерації унікальних ID користувачів
+let users = [];
+let nextId = 1;
 
-function getAll() { // Повертає всі користувачі
-    return users;
+function toDTO(user) {
+    return {
+        id: user.id,
+        name: user.name,
+        email: user.email
+    };
 }
 
-function getById(id) { // Повертає користувача за ID або undefined, якщо не знайдено
-    return users.find(u => u.id === id); // Пошук користувача за ID
+function getAll() {
+    return users.map(toDTO);
 }
 
-function create(name, email) { // Створює нового користувача з унікальним ID та повертає його
-    const newUser = { id: userID++, name, email }; // Генерація нового користувача з унікальним ID
+function getById(id) {
+    const user = users.find(u => u.id === id);
+    return user ? toDTO(user) : null;
+}
+
+function create(data) {
+    const newUser = {
+        id: nextId++,
+        name: data.name,
+        email: data.email
+    };
     users.push(newUser);
-    return newUser;
+    return toDTO(newUser);
 }
 
-function update(id, name, email) { // Оновлює існуючого користувача за ID, повертає оновленого користувача або null, якщо не знайдено
+function update(id, data) {
     const index = users.findIndex(u => u.id === id);
     if (index === -1) return null;
 
-    users[index] = { id, name, email }; // Оновлення даних користувача
-    return users[index];
+    users[index] = {
+        id: id,
+        name: data.name,
+        email: data.email
+    };
+    return toDTO(users[index]);
 }
 
-function remove(id) { // Видаляє користувача за ID, повертає true, якщо видалено, або false, якщо не знайдено
+function remove(id) {
     const index = users.findIndex(u => u.id === id);
     if (index === -1) return false;
 
-    users.splice(index, 1); // Видалення користувача з масиву
+    users.splice(index, 1);
     return true;
 }
 
-module.exports = { getAll, getById, create, update, remove }; // Експорт функцій для використання в інших частинах програми, таких як маршрути або контролери
+module.exports = { getAll, getById, create, update, remove };

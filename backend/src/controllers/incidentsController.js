@@ -1,47 +1,69 @@
-const incidentsService = require("../services/incidentsService"); // Імпорт сервісу для інцидентів, який містить бізнес-логіку для роботи з даними інцидентів, таких як отримання, створення, оновлення та видалення інцидентів
+const incidentsService = require("../services/incidentsService");
+const { validateIncident } = require("../validation/validateIncident");
 
-class IncidentsController { // Клас контролера для інцидентів, який містить методи для обробки HTTP запитів, пов'язаних з інцидентами, таких як отримання всіх інцидентів, отримання інцидента за ID, створення нового інцидента, оновлення існуючого інцидента та видалення інцидента
-    getAll(req, res) {
-        const items = incidentsService.getAll(); // Виклик методу getAll з сервісу для інцидентів для отримання списку всіх інцидентів, який повертає масив інцидентів, і відправка його у відповіді у форматі JSON з HTTP статусом 200 (OK)
-        res.json(items);
-    }
+exports.getAll = (req, res) => {
+    const incidents = incidentsService.getAll();
+    res.status(200).json(incidents);
+};
 
-    getById(req, res) { // Отримання інцидента за ID, викликає метод getById з сервісу для інцидентів і повертає результат у форматі JSON з статусом 200, або помилку, якщо інцидента не знайдено
-        const id = Number(req.params.id); // Отримання ID інцидента з параметрів запиту та перетворення його в число для подальшого використання в сервісі для інцидентів
-        const item = incidentsService.getById(id);
-
-        if (!item) return res.status(404).json({ message: "Not found" }); // Якщо метод getById повертає undefined, це означає, що інцидента з таким ID не знайдено, тому відправляємо відповідь з HTTP статусом 404 (Not Found) та повідомленням "Not found"
-
-        res.json(item);
-    }
-
-    create(req, res) {
-    const { title, type, date, severity, url } = req.body;
-    const created = incidentsService.create({ title, type, date, severity, url });
-    res.status(201).json(created);
-}
-
-
-    update(req, res) {
+exports.getById = (req, res, next) => {
     const id = Number(req.params.id);
-    const { title, type, date, severity, url } = req.body;
+    const incident = incidentsService.getById(id);
 
-    const updated = incidentsService.update(id, { title, type, date, severity, url });
-    if (!updated) return res.status(404).json({ message: "Not found" });
-
-    res.json(updated);
-}
-
-
-
-    delete(req, res) {
-        const id = Number(req.params.id); // Отримання ID інцидента з параметрів запиту та перетворення його в число для подальшого використання в сервісі для інцидентів
-        const ok = incidentsService.delete(id); // Виклик методу delete з сервісу для інцидентів для видалення інцидента з вказаним ID, який повертає true, якщо видалення було успішним, або false, якщо інцидента з таким ID не знайдено
-
-        if (!ok) return res.status(404).json({ message: "Not found" }); // Якщо метод delete повертає false, це означає, що інцидента з таким ID не знайдено, тому відправляємо відповідь з HTTP статусом 404 (Not Found) та повідомленням "Not found"
-
-        res.status(204).send(); // Відправка відповіді з HTTP статусом 204 (No Content) без тіла відповіді, що означає успішне видалення інцидента
+    if (!incident) {
+        const err = new Error("Інцидент не знайдено");
+        err.type = "NOT_FOUND";
+        return next(err);
     }
-}
 
-module.exports = new IncidentsController(); // Експорт екземпляра класу IncidentsController для використання в інших частинах програми, таких як маршрути, де він буде підключений до відповідних маршрутів для обробки запитів, пов'язаних з інцидентами, таких як отримання, створення, оновлення та видалення інцидентів
+    res.status(200).json(incident);
+};
+
+exports.create = (req, res, next) => {
+    const errors = validateIncident(req.body);
+
+    if (errors.length > 0) {
+        const err = new Error("Помилка валідації");
+        err.type = "VALIDATION_ERROR";
+        err.details = errors;
+        return next(err);
+    }
+
+    const incident = incidentsService.create(req.body);
+    res.status(201).json(incident);
+};
+
+exports.update = (req, res, next) => {
+    const id = Number(req.params.id);
+    const errors = validateIncident(req.body);
+
+    if (errors.length > 0) {
+        const err = new Error("Помилка валідації");
+        err.type = "VALIDATION_ERROR";
+        err.details = errors;
+        return next(err);
+    }
+
+    const incident = incidentsService.update(id, req.body);
+
+    if (!incident) {
+        const err = new Error("Інцидент не знайдено");
+        err.type = "NOT_FOUND";
+        return next(err);
+    }
+
+    res.status(200).json(incident);
+};
+
+exports.remove = (req, res, next) => {
+    const id = Number(req.params.id);
+    const deleted = incidentsService.remove(id);
+
+    if (!deleted) {
+        const err = new Error("Інцидент не знайдено");
+        err.type = "NOT_FOUND";
+        return next(err);
+    }
+
+    res.status(204).send();
+};

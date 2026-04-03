@@ -1,11 +1,9 @@
-// Логгер для відстеження запитів та відповідей
 module.exports = (req, res, next) => {
-
     const start = Date.now();
 
     res.on("finish", () => {
-        const time = Date.now() - start;
-        console.log(`${req.method} ${req.originalUrl} ${res.statusCode} - ${time}ms`);
+        const duration = Date.now() - start;
+        console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`);
     });
 
     next();

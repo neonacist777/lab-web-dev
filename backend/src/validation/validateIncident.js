@@ -1,28 +1,74 @@
-function validateIncident(req, res, next) { // Middleware для валідації даних інцидента, який перевіряє наявність та коректність полів title, type, date, severity та url у тілі запиту при створенні або оновленні інцидента, і якщо дані є некоректними, відправляє відповідь з HTTP статусом 400 (Bad Request) та повідомленням про помилку, або викликає next() для передачі управління наступному middleware або контролеру, якщо дані є коректними
-    const { title, type, date, severity, url } = req.body; // Отримання полів title, type, date, severity та url з тіла запиту для подальшої валідації їх значень, які повинні відповідати певним критеріям для коректного створення або оновлення інцидента
+const { ALLOWED_TYPES } = require("../services/incidentsService");
+function validateIncident(body) {
+    const errors = [];
 
-    if (!title || typeof title !== "string") { 
-        return res.status(400).json({ message: "Invalid title" });  // Якщо поле title відсутнє або не є рядком, це означає, що дані для створення або оновлення інцидента є некоректними, тому відправляємо відповідь з HTTP статусом 400 (Bad Request) та повідомленням "Invalid title"
+    const title = typeof body.title === "string" ? body.title.trim() : "";
+    const type = body.type;
+    const date = body.date;
+    const severity = body.severity;
+    const tags = body.tags;
+    const comments = body.comments;
+
+    // TITLE
+    if (!title) {
+        errors.push({ field: "title", message: "Назва є обов'язковою" });
+    } else if (title.length < 3 || title.length > 100) {
+        errors.push({ field: "title", message: "Назва має бути від 3 до 100 символів" });
     }
 
-    if (!type || typeof type !== "string") {
-        return res.status(400).json({ message: "Invalid type" }); // Якщо поле type відсутнє або не є рядком, это означает, что данные для создания или обновления инцидента являются некорректными, поэтому отправляем ответ с HTTP статусом 400 (Bad Request) и сообщением "Invalid type"
+    // TYPE
+    if (!type) {
+        errors.push({ field: "type", message: "Тип є обов'язковим" });
+    } else if (!ALLOWED_TYPES.includes(type)) {
+        errors.push({ field: "type", message: `Тип має бути одним з: ${ALLOWED_TYPES.join(", ")}` });
     }
 
-    if (!date || typeof date !== "string") {
-        return res.status(400).json({ message: "Invalid date" }); // якщо поле date відсутнє або не є рядком, це означає, що дані для створення або оновлення інцидента є некоректними, тому відправляємо відповідь з HTTP статусом 400 (Bad Request) та повідомленням "Invalid date"
+    // DATE
+    if (!date) {
+        errors.push({ field: "date", message: "Дата є обов'язковою" });
+    } else {
+        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!dateRegex.test(date)) {
+            errors.push({ field: "date", message: "Дата має бути у форматі YYYY-MM-DD" });
+        } else if (isNaN(Date.parse(date))) {
+            errors.push({ field: "date", message: "Некоректна дата" });
+        }
     }
 
-    const sev = Number(severity);
-    if (!severity || isNaN(sev) || sev < 1 || sev > 10) {
-        return res.status(400).json({ message: "Invalid severity" }); // якщо поле severity відсутнє, не є числом, або його значення менше 1 або більше 10, це означает, что данные для создания или обновления инцидента являются некорректными, поэтому отправляем ответ с HTTP статусом 400 (Bad Request) и сообщением "Invalid severity"
+    // SEVERITY
+    if (severity === undefined || severity === null) {
+        errors.push({ field: "severity", message: "Критичність є обов'язковою" });
+    } else {
+        const sev = Number(severity);
+        if (isNaN(sev)) {
+            errors.push({ field: "severity", message: "Критичність має бути числом" });
+        } else if (!Number.isInteger(sev)) {
+            errors.push({ field: "severity", message: "Критичність має бути цілим числом" });
+        } else if (sev < 1 || sev > 10) {
+            errors.push({ field: "severity", message: "Критичність має бути від 1 до 10" });
+        }
     }
 
-    if (url && typeof url !== "string") {
-        return res.status(400).json({ message: "Invalid url" }); // якщо поле url присутнє, але не є рядком, це означает, что данные для создания или обновления инцидента являются некорректными, поэтому отправляем ответ с HTTP статусом 400 (Bad Request) и сообщением "Invalid url"
+    // TAGS
+    if (tags !== undefined) {
+        if (!Array.isArray(tags)) {
+            errors.push({ field: "tags", message: "Tags має бути масивом" });
+        } else if (!tags.every(tag => typeof tag === "string")) {
+            errors.push({ field: "tags", message: "Кожен tag має бути рядком" });
+        }
     }
 
-    next(); // Якщо всі поля є коректними, викликаємо next() для передачі управління наступному middleware або контролеру, який буде обробляти запит для створення або оновлення інцидента з валідними даними
+    // COMMENTS
+    if (comments !== undefined) {
+        if (!Array.isArray(comments)) {
+            errors.push({ field: "comments", message: "Comments має бути масивом" });
+        } else if (!comments.every(c => typeof c === "string")) {
+            errors.push({ field: "comments", message: "Кожен comment має бути рядком" });
+        }
+    }
+
+
+    return errors;
 }
 
-module.exports = validateIncident;
+module.exports = { validateIncident };

@@ -1,15 +1,11 @@
 const express = require("express");
 const router = express.Router();
-
 const controller = require("../controllers/incidentsController");
-const validateIncident = require("../validation/validateIncident");
 
 router.get("/", controller.getAll);
 router.get("/:id", controller.getById);
-
-router.post("/", validateIncident, controller.create);
-router.put("/:id", validateIncident, controller.update);
-
-router.delete("/:id", controller.delete);
+router.post("/", controller.create);
+router.put("/:id", controller.update);
+router.delete("/:id", controller.remove);
 
 module.exports = router;
