@@ -1,18 +1,27 @@
-const incidentsService = require("../services/incidentsService");
-const { validateIncident } = require("../validation/validateIncident");
+const incidentsRepository = require('../repositories/incidentsRepository');
+const { validateIncident } = require('../validation/validateIncident');
 
 exports.getAll = (req, res) => {
-    const incidents = incidentsService.getAll();
+    const filters = {
+        type: req.query.type,
+        userId: req.query.userId,
+        minSeverity: req.query.minSeverity,
+        sort: req.query.sort,
+        order: req.query.order,
+        limit: req.query.limit
+    };
+
+    const incidents = incidentsRepository.getAll(filters);
     res.status(200).json(incidents);
 };
 
 exports.getById = (req, res, next) => {
     const id = Number(req.params.id);
-    const incident = incidentsService.getById(id);
+    const incident = incidentsRepository.getById(id);
 
     if (!incident) {
-        const err = new Error("Інцидент не знайдено");
-        err.type = "NOT_FOUND";
+        const err = new Error('Інцидент не знайдено');
+        err.type = 'NOT_FOUND';
         return next(err);
     }
 
@@ -23,13 +32,13 @@ exports.create = (req, res, next) => {
     const errors = validateIncident(req.body);
 
     if (errors.length > 0) {
-        const err = new Error("Помилка валідації");
-        err.type = "VALIDATION_ERROR";
+        const err = new Error('Помилка валідації');
+        err.type = 'VALIDATION_ERROR';
         err.details = errors;
         return next(err);
     }
 
-    const incident = incidentsService.create(req.body);
+    const incident = incidentsRepository.create(req.body);
     res.status(201).json(incident);
 };
 
@@ -38,17 +47,17 @@ exports.update = (req, res, next) => {
     const errors = validateIncident(req.body);
 
     if (errors.length > 0) {
-        const err = new Error("Помилка валідації");
-        err.type = "VALIDATION_ERROR";
+        const err = new Error('Помилка валідації');
+        err.type = 'VALIDATION_ERROR';
         err.details = errors;
         return next(err);
     }
 
-    const incident = incidentsService.update(id, req.body);
+    const incident = incidentsRepository.update(id, req.body);
 
     if (!incident) {
-        const err = new Error("Інцидент не знайдено");
-        err.type = "NOT_FOUND";
+        const err = new Error('Інцидент не знайдено');
+        err.type = 'NOT_FOUND';
         return next(err);
     }
 
@@ -57,11 +66,11 @@ exports.update = (req, res, next) => {
 
 exports.remove = (req, res, next) => {
     const id = Number(req.params.id);
-    const deleted = incidentsService.remove(id);
+    const deleted = incidentsRepository.remove(id);
 
     if (!deleted) {
-        const err = new Error("Інцидент не знайдено");
-        err.type = "NOT_FOUND";
+        const err = new Error('Інцидент не знайдено');
+        err.type = 'NOT_FOUND';
         return next(err);
     }
 
