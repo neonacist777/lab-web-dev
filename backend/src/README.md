@@ -3,7 +3,7 @@
 REST API для трекінгу кіберінцидентів, реалізоване на Node.js + Express + SQLite.  
 Проєкт містить CRUD для трьох сутностей (users, incidents, comments), підтримує фільтрацію, сортування, зв’язки 1–M та централізовану обробку помилок.
 
-# 🚀 Як запустити
+#  Як запустити
 
 1. Перейти в папку проєкту:
    cd backend
@@ -28,7 +28,7 @@ backend/data/app.db
 - src/database/schema.sql — таблиці
 - src/database/seed.js — тестові дані
 
-# 📊 Приклади запитів (curl)
+#  Приклади запитів (curl)
 
 1. Створити користувача:
 curl -X POST http://localhost:3000/api/users \
@@ -49,14 +49,14 @@ curl -X POST http://localhost:3000/api/incidents \
 5. Видалити користувача:
 curl -X DELETE http://localhost:3000/api/users/1
 
-# 🔍 Запит з WHERE + ORDER BY + LIMIT
+#  Запит з WHERE + ORDER BY + LIMIT
 
 Реалізовано в src/repositories/incidentsRepository.js
 
 Приклад:
 GET /api/incidents?type=DDoS&sort=severity&order=desc&limit=5
 
-# 🔗 Зв’язки в БД (1–M)
+#  Зв’язки в БД (1–M)
 
 Users (1) → (M) Incidents:
 user_id INTEGER REFERENCES users(id) ON DELETE SET NULL
@@ -67,7 +67,7 @@ incident_id INTEGER REFERENCES incidents(id) ON DELETE CASCADE
 Увімкнено:
 PRAGMA foreign_keys = ON;
 
-# 🔧 CRUD для сутностей
+#  CRUD для сутностей
 
 Реалізовано повний CRUD для:
 - /api/users
@@ -80,7 +80,7 @@ PRAGMA foreign_keys = ON;
 - repositories/ — SQL‑запити
 - validation/ — валідація
 
-# ⚠️ HTTP‑коди стану
+#  HTTP‑коди стану
 
 - 201 — створення
 - 200 — успішно
@@ -92,7 +92,7 @@ PRAGMA foreign_keys = ON;
 Централізована обробка:
 src/middleware/errorHandler.js
 
-# 🧪 Seed — тестові дані
+#  Seed — тестові дані
 
 При першому запуску додаються:
 - 3 користувачі
@@ -101,7 +101,7 @@ src/middleware/errorHandler.js
 
 Файл: src/database/seed.js
 
-# 🧰 Структура проєкту
+#  Структура проєкту
 
 src/
  ├── controllers/
