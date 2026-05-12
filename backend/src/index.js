@@ -11,24 +11,29 @@ const usersRoutes = require('./routes/usersRoutes');
 const incidentsRoutes = require('./routes/incidentsRoutes');
 const commentsRoutes = require('./routes/commentsRoutes');
 
-// Ініціалізація бази даних
 initializeDatabase();
 seedDatabase();
 
 const app = express();
 
-app.use(cors());
+// CORS — без *, лише конкретний origin фронтенду
+app.use(cors({
+    origin: ['http://localhost:5500', 'http://127.0.0.1:5500'], // порт Live Server у VS Code
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
+
 app.use(express.json());
 app.use(logger);
 
-// Маршрути
-app.use('/api/users', usersRoutes);
-app.use('/api/incidents', incidentsRoutes);
-app.use('/api/comments', commentsRoutes);
+// Маршрути з версією /api/v1
+app.use('/api/v1/users', usersRoutes);
+app.use('/api/v1/incidents', incidentsRoutes);
+app.use('/api/v1/comments', commentsRoutes);
 
 app.get('/health', (req, res) => res.status(200).json({ ok: true }));
 
-// Обробка неіснуючих маршрутів
 app.use((req, res, next) => {
     const err = new Error('Маршрут не знайдено');
     err.type = 'NOT_FOUND';

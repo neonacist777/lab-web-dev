@@ -3,27 +3,32 @@ module.exports = (err, req, res, next) => {
 
     if (err.type === 'VALIDATION_ERROR') {
         return res.status(400).json({
-            error: {
-                code: 'VALIDATION_ERROR',
-                message: 'Помилка валідації даних',
-                details: err.details || []
-            }
+            status: 400,
+            title: 'Помилка валідації',
+            detail: 'Перевірте правильність введених даних',
+            errors: err.details || []
         });
     }
 
     if (err.type === 'NOT_FOUND') {
         return res.status(404).json({
-            error: {
-                code: 'NOT_FOUND',
-                message: err.message || 'Ресурс не знайдено'
-            }
+            status: 404,
+            title: 'Не знайдено',
+            detail: err.message || 'Ресурс не знайдено'
+        });
+    }
+
+    if (err.type === 'CONFLICT') {
+        return res.status(409).json({
+            status: 409,
+            title: 'Конфлікт',
+            detail: err.message || 'Ресурс вже існує'
         });
     }
 
     res.status(500).json({
-        error: {
-            code: 'INTERNAL_SERVER_ERROR',
-            message: 'Внутрішня помилка сервера'
-        }
+        status: 500,
+        title: 'Внутрішня помилка сервера',
+        detail: 'Спробуйте пізніше або зверніться до адміністратора'
     });
 };
